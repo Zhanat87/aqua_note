@@ -6,3 +6,8 @@ homepage:
   path: /
   defaults:
     _controller: AppBundle:Main:homepage
+
+server:
+  path: /server
+  defaults:
+    _controller: AppBundle:Main:server
