@@ -1,13 +1,8 @@
 app:
-    resource: '@AppBundle/Controller/'
-    type: annotation
+    resource: "@AppBundle/Controller/"
+    type:     annotation
 
 homepage:
-  path: /
-  defaults:
-    _controller: AppBundle:Main:homepage
-
-server:
-  path: /server
-  defaults:
-    _controller: AppBundle:Main:server
+    path: /
+    defaults:
+        _controller: AppBundle:Main:homepage

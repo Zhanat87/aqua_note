@@ -52,6 +52,10 @@ services:
       volumes:
         - ..:/application
         - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.1/fpm/conf.d/99-overrides.ini
+      depends_on:
+        - memcached
+        - mysql
+        - redis
       links:
         - memcached
         - mysql
