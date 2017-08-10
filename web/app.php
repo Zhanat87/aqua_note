@@ -1,5 +1,7 @@
 <?php
 
+//var_dump($_SERVER);exit;
+
 use Symfony\Component\HttpFoundation\Request;
 
 /**

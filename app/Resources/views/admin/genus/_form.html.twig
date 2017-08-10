@@ -1,12 +1,59 @@
+{#https://symfony.com/doc/3.0/reference/forms/twig_reference.html#}
+{#http://getbootstrap.com/css/#forms-control-validation#}
+{#vendor/symfony/symfony/src/Symfony/Bridge/Twig/Resources/views/Form/form_div_layout.html.twig#}
+{#vendor/symfony/symfony/src/Symfony/Bridge/Twig/Resources/views/Form/bootstrap_3_layout.html.twig#}
+
+{#{{ form(genusForm) }}#}
+
 {{ form_start(genusForm) }}
+
+    {#{{ form_errors(genusForm) }}#}
+
+    {#{{ form_widget(genusForm) }}#}
+
     {{ form_row(genusForm.name) }}
-    {{ form_row(genusForm.subFamily) }}
+
+    {#{{ form_label(genusForm.name) }}#}
+    {#{{ form_widget(genusForm.name) }}#}
+    {#{{ form_errors(genusForm.name) }}#}
+
+    {#{{ dump(genusForm.subFamily) }}#}
+
+    {{ form_row(genusForm.subFamily, {
+        label: 'Taxonomic sub family',
+        attr: {
+            class: 'foo',
+        },
+        placeholder: 'Select a sub family'
+    }) }}
     {{ form_row(genusForm.speciesCount, {
         'label': 'Number of Species'
     }) }}
     {{ form_row(genusForm.funFact) }}
-    {{ form_row(genusForm.isPublished) }}
-    {{ form_row(genusForm.firstDiscoveredAt) }}
+    {{ form_row(genusForm.isPublished, {
+        help: 'Should this genus be shown on the site?'
+    }) }}
 
-    <button type="submit" class="btn btn-primary" formnovalidate>Save</button>
+    {#{{ form_row(genusForm.firstDiscoveredAt) }}#}
+    {#{{ form_row(genusForm.firstDiscoveredAt.year) }}#}
+    {{ form_label(genusForm.firstDiscoveredAt.year) }}
+    <select id="{{ genusForm.firstDiscoveredAt.year.vars.id }}"
+            name="{{ genusForm.firstDiscoveredAt.year.vars.full_name }}">
+        {% for choice in genusForm.firstDiscoveredAt.year.vars.choices %}
+            <option value="{{ choice.value }}"
+                    {{ choice.value == genusForm.firstDiscoveredAt.year.vars.data ? 'selected' : '' }}>
+                {{ choice.label }}
+            </option>
+        {% endfor %}
+    </select>
+    {{ form_errors(genusForm.firstDiscoveredAt.year) }}
+    {% do genusForm.firstDiscoveredAt.year.setRendered() %}
+
+    {{ form_row(genusForm.firstDiscoveredAt.month) }}
+
+    {{ form_row(genusForm.firstDiscoveredAt.day) }}
+
+    <button type="submit" class="btn btn-primary" formnovalidate>
+        Save
+    </button>
 {{ form_end(genusForm) }}
