@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -12,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  * @ORM\Table(name="user")
  * @UniqueEntity(fields={"email"}, message="It looks like your already have an account!")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  */
 class User implements UserInterface
 {
@@ -45,9 +47,49 @@ class User implements UserInterface
     private $plainPassword;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private $avatarUri;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isScientist;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $firstName;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $lastName;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $universityName;
+
+    /**
      * @ORM\Column(type="json_array")
      */
     private $roles = [];
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Genus", mappedBy="genusScientists")
+     */
+    private $studiedGenuses;
+
+    public function __construct()
+    {
+        $this->studiedGenuses = new ArrayCollection();
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
 
     // needed by the security system
     public function getUsername()
@@ -113,5 +155,98 @@ class User implements UserInterface
         // forces the object to look "dirty" to Doctrine. Avoids
         // Doctrine *not* saving this entity, if only plainPassword changes
         $this->password = null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAvatarUri()
+    {
+        return $this->avatarUri;
+    }
+
+    /**
+     * @param mixed $avatarUri
+     */
+    public function setAvatarUri($avatarUri)
+    {
+        $this->avatarUri = $avatarUri;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getisScientist()
+    {
+        return $this->isScientist;
+    }
+
+    /**
+     * @param mixed $isScientist
+     */
+    public function setIsScientist($isScientist)
+    {
+        $this->isScientist = $isScientist;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+
+    /**
+     * @param mixed $firstName
+     */
+    public function setFirstName($firstName)
+    {
+        $this->firstName = $firstName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
+
+    /**
+     * @param mixed $lastName
+     */
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUniversityName()
+    {
+        return $this->universityName;
+    }
+
+    /**
+     * @param mixed $universityName
+     */
+    public function setUniversityName($universityName)
+    {
+        $this->universityName = $universityName;
+    }
+
+    public function getFullName()
+    {
+        return trim($this->getFirstName().' '.$this->getLastName());
+    }
+
+    /**
+     * @return ArrayCollection|Genus[]
+     */
+    public function getStudiedGenuses()
+    {
+        return $this->studiedGenuses;
     }
 }
