@@ -2,10 +2,13 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Repository\GenusRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
+
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\GenusRepository")
@@ -25,6 +28,12 @@ class Genus
      * @ORM\Column(type="string")
      */
     private $name;
+
+    /**
+     * @ORM\Column(type="string", unique=true)
+     * @Gedmo\Slug(fields={"name"})
+     */
+    private $slug;
 
     /**
      * @Assert\NotBlank()
@@ -63,15 +72,14 @@ class Genus
     private $notes;
 
     /**
-     * @ORM\Column(type="string", unique=true)
-     * @Gedmo\Slug(fields={"name"})
-     * https://symfony.com/doc/master/bundles/StofDoctrineExtensionsBundle/index.html
-     */
-    private $slug;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="studiedGenuses", fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="genus_scientist")
+     * @ORM\OneToMany(
+     *     targetEntity="GenusScientist",
+     *     mappedBy="genus",
+     *     fetch="EXTRA_LAZY",
+     *     orphanRemoval=true,
+     *     cascade={"persist"}
+     * )
+     * @Assert\Valid()
      */
     private $genusScientists;
 
@@ -104,7 +112,7 @@ class Genus
         return $this->subFamily;
     }
 
-    public function setSubFamily(SubFamily $subFamily)
+    public function setSubFamily(SubFamily $subFamily = null)
     {
         $this->subFamily = $subFamily;
     }
@@ -172,24 +180,43 @@ class Genus
         $this->slug = $slug;
     }
 
-    public function addGenusScientist(User $user)
+    public function addGenusScientist(GenusScientist $genusScientist)
     {
-        if ($this->genusScientists->contains($user)) {
+        if ($this->genusScientists->contains($genusScientist)) {
             return;
         }
-        $this->genusScientists[] = $user;
+
+        $this->genusScientists[] = $genusScientist;
+        // needed to update the owning side of the relationship!
+        $genusScientist->setGenus($this);
+    }
+
+    public function removeGenusScientist(GenusScientist $genusScientist)
+    {
+        if (!$this->genusScientists->contains($genusScientist)) {
+            return;
+        }
+
+        $this->genusScientists->removeElement($genusScientist);
+        // needed to update the owning side of the relationship!
+        $genusScientist->setGenus(null);
     }
 
     /**
-     * @return ArrayCollection|User[]
+     * @return ArrayCollection|GenusScientist[]
      */
     public function getGenusScientists()
     {
         return $this->genusScientists;
     }
 
-    public function removeGenusScientist(User $user)
+    /**
+     * @return \Doctrine\Common\Collections\Collection|GenusScientist[]
+     */
+    public function getExpertScientists()
     {
-        $this->genusScientists->removeElement($user);
+        return $this->getGenusScientists()->matching(
+            GenusRepository::createExpertCriteria()
+        );
     }
 }

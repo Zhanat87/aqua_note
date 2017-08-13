@@ -42,9 +42,9 @@
                     {% for genusScientist in user.studiedGenuses %}
                         <li class="list-group-item">
                             <a href="{{ path('genus_show', {
-                                'slug': genusScientist.slug
+                                'slug': genusScientist.genus.slug
                             }) }}">
-                                {{ genusScientist.name }}
+                                {{ genusScientist.genus.name }}
                             </a>
                         </li>
                     {% endfor %}

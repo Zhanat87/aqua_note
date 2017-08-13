@@ -10,7 +10,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class HelpFormExtension extends AbstractTypeExtension
 {
-
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if ($options['help']) {
@@ -27,5 +26,4 @@ class HelpFormExtension extends AbstractTypeExtension
     {
         return FormType::class;
     }
-
 }

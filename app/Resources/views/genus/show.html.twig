@@ -17,21 +17,26 @@
                 <dd>{{ genus.funFact|markdownify }}</dd>
                 <dt>Recent Notes</dt>
                 <dd>{{ recentNoteCount }}</dd>
+
                 <dt>Lead Scientists</dt>
                 <dd>
                     <ul class="list-group">
                         {% for genusScientist in genus.genusScientists %}
                             <li class="list-group-item js-scientist-item">
                                 <a href="{{ path('user_show', {
-                                    'id': genusScientist.id
+                                    'id': genusScientist.user.id
                                 }) }}">
-                                    {{ genusScientist.fullName }}
+                                    {{ genusScientist.user.fullName }}
+                                    ({{ genusScientist.yearsStudied }} years)
                                 </a>
-                                <a href="#" class="btn btn-link btn-xs pull-right js-remove-scientist-user"
+
+                                <a href="#"
+                                   class="btn btn-link btn-xs pull-right js-remove-scientist-user"
                                    data-url="{{ path('genus_scientists_remove', {
                                        genusId: genus.id,
-                                       userId: genusScientist.id
-                                   }) }}">
+                                       userId: genusScientist.user.id
+                                   }) }}"
+                                >
                                     <span class="fa fa-close"></span>
                                 </a>
                             </li>
@@ -58,12 +63,15 @@
           <NoteSection url={notesUrl} />,
           document.getElementById('js-notes-wrapper')
         );
+    </script>
 
+    <script>
         jQuery(document).ready(function() {
             $('.js-remove-scientist-user').on('click', function(e) {
                 e.preventDefault();
 
                 var $el = $(this).closest('.js-scientist-item');
+
                 $(this).find('.fa-close')
                     .removeClass('fa-close')
                     .addClass('fa-spinner')
@@ -75,6 +83,8 @@
                 }).done(function() {
                     $el.fadeOut();
                 });
+
+                e.preventDefault();
             });
         });
     </script>
